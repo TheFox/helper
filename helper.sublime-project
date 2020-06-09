@@ -2,7 +2,7 @@
   "folders": [
     {
       "path": ".",
-      "name": "docs",
+      "name": "helper",
       "folder_exclude_patterns": [ ],
       "file_exclude_patterns": [ ]
     }
