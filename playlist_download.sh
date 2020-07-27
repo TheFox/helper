@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-
-# Download .m3u8 playlists.
+###
+### playlist_download.sh - Download .m3u8 playlists.
+###
+### Usage:
+###   playlist_download.sh <url>
+###
+### Options:
+###   <url>               URL to main playlist.
+###   -h                  Show this message.
 
 NO_COLOR='\033[0m'
 RED='\033[0;31m'
@@ -100,6 +107,15 @@ which wget &> /dev/null || { echo 'ERROR: wget not found in PATH'; exit 1; }
 which mktemp &> /dev/null || { echo 'ERROR: mktemp not found in PATH'; exit 1; }
 which head &> /dev/null || { echo 'ERROR: head not found in PATH'; exit 1; }
 which rm &> /dev/null || { echo 'ERROR: rm not found in PATH'; exit 1; }
+
+help() {
+    head -50 "$0" | grep '^###' | sed 's/^###//; s/^ //'
+}
+
+if [[ $# -lt 1 ]] || [[ "$1" == -h ]]; then
+    help
+    exit 1
+fi
 
 url="$1"
 
