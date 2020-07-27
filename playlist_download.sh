@@ -20,7 +20,13 @@ function download_ts_file() {
 	local url_basename=$(basename "$url")
 	local tmp_file="${url_basename}.tmp"
 	local file_number="$2"
-	#local file_number="$2"
+	local br_s="$3"
+	local br_e="$4"
+
+	local br=""
+	if [[ "$br_s" != "" ]]; then
+		br="-r ${br_s}-${br_e}"
+	fi
 
 	if [[ "$url_basename" = media.ts ]] ; then
 		url_basename=$(printf "media_%06d.ts" $file_number)
@@ -28,7 +34,8 @@ function download_ts_file() {
 
 	if [[ ! -f "$url_basename" ]]; then
 		echo -e "${GREEN} -> download ts file #${file_number}: '$url'${NO_COLOR}"
-		wget -O "$tmp_file" "$url"
+		echo wget ${br} -O "$tmp_file" "$url"
+		wget ${br} -O "$tmp_file" "$url"
 		mv "$tmp_file" "$url_basename"
 	else
 		echo -e "${YELLOW} -> WARNING: file already exists: '${url_basename}'${NO_COLOR}"
@@ -86,22 +93,28 @@ function download_playlist() {
 			rm "${split_file}"
 		done
 
+		line_number=0
 		for split_file in ./br1*part2_* ; do
 			#echo "-> split file B: ${split_file}"
 			br_infos=$(grep EXT-X-BYTERANGE "${split_file}" | sed 's/#EXT-X-BYTERANGE://; s/@/ /')
-			br_len=$(printf %d $br_infos)
+			br_len=$(echo $br_infos | awk '{ print $1 }')
 			br_pos=$(echo $br_infos | awk '{ print $2 }')
 			echo "-> byte-range len: '${br_len}'"
 			echo "-> byte-range pos: '${br_pos}'"
+			file_name=$(grep .ts "${split_file}")
+			echo "-> ts line #${line_number}: $file_name"
+			download_ts_file "${url_dirname}/${file_name}" $line_number $br_pos $br_len
+			echo "-> file: '${file_name}'"
 			rm "${split_file}"
+			let "line_number += 1"
 		done
 	else
 		first_ts_file=$(head -1 "$ts_file1")
 		last_ts_file=$(tail -1 "$ts_file1")
 		line_number=0
 		while read -r line ; do
-			echo " -> ts line #${line_number}: $line/$last_ts_file"
-			#download_ts_file "${url_dirname}/${line}" $line_number
+			echo "-> ts line #${line_number}: $line/$last_ts_file"
+			download_ts_file "${url_dirname}/${line}" $line_number
 			#sleep 0.3
 			let "line_number += 1"
 		done < "$ts_file1"
