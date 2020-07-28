@@ -6,10 +6,10 @@
 ###   ts_files_to_mp4.sh <format> <seq_start> <seq_end> <output_path>
 ###
 ### Options:
-###   <format>            File format: ts_%d.mp4
+###   <format>            File format: media_%d.ts
 ###   <seq_start>         Sequence Begin
 ###   <seq_end>           Sequence End
-###   <output_path>       Output Path
+###   <output_path>       Output Path: media.mp4
 ###   -h                  Show this message.
 
 NO_COLOR='\033[0m'
@@ -25,7 +25,7 @@ help() {
     head -50 "$0" | grep '^###' | sed 's/^###//; s/^ //'
 }
 
-if [[ $# -lt 1 ]] || [[ "$1" == -h ]]; then
+if [[ $# -lt 4 ]] || [[ "$1" == -h ]]; then
     help
     exit 1
 fi
@@ -36,16 +36,16 @@ seq_end="$3"
 dest_path="$4"
 
 tmp_dir=$(mktemp -d -t 'ts_to_mp4')
-echo " -> tmp dir: $tmp_dir"
+echo "-> tmp dir: $tmp_dir"
 
 input_file="${tmp_dir}/input.ts"
-echo -e " -> input file: '${input_file}'"
+echo -e "-> input file: '${input_file}'"
 
 # Reset input file.
 > "${input_file}"
 
 # Concat files.
-echo -e "${GREEN} -> concat files: ${seq_start} to ${seq_end}${NO_COLOR}"
+echo -e "${GREEN}-> concat files: ${seq_start} to ${seq_end}${NO_COLOR}"
 for n in $(seq ${seq_start} ${seq_end}) ; do
 	file=$(printf "$file_format" $n)
 	if [[ -f "${file}" ]] ; then
@@ -57,14 +57,14 @@ for n in $(seq ${seq_start} ${seq_end}) ; do
 	fi
 done
 
-echo -e " -> input file: $(ls -lah ${input_file})"
+echo -e "-> input file: $(ls -lah ${input_file})"
 
 # Convert ts to .mp4
-echo -e "${GREEN} -> convert ts to mp4 (x264)${NO_COLOR}"
+echo -e "${GREEN}-> convert ts to mp4 (x264)${NO_COLOR}"
 ffmpeg -i "${input_file}" -c:v libx264 "${dest_path}"
 # ffmpeg -i ./input.ts -acodec copy -vcodec copy ./output.mp4
 
-echo ' -> clean up'
+echo '-> clean up'
 rm -rf "$tmp_dir"
 
-echo 'done'
+echo '-> done'
