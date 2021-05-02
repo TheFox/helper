@@ -36,13 +36,15 @@ seq_end="$3"
 dest_path="$4"
 
 tmp_dir=$(mktemp -d -t 'ts_to_mp4')
-echo "-> tmp dir: $tmp_dir"
+echo "-> tmp dir: '${tmp_dir}'"
 
 input_file="${tmp_dir}/input.ts"
 echo -e "-> input file: '${input_file}'"
 
 # Reset input file.
-> "${input_file}"
+if [[ -f "${input_file}" ]] ; then
+	rm "${input_file}"
+fi
 
 # Concat files.
 echo -e "${GREEN}-> concat files: ${seq_start} to ${seq_end}${NO_COLOR}"
@@ -57,14 +59,11 @@ for n in $(seq ${seq_start} ${seq_end}) ; do
 	fi
 done
 
-echo -e "-> input file: $(ls -lah ${input_file})"
-
 # Convert ts to .mp4
 echo -e "${GREEN}-> convert ts to mp4 (x264)${NO_COLOR}"
 ffmpeg -i "${input_file}" -c:v libx264 "${dest_path}"
-# ffmpeg -i ./input.ts -acodec copy -vcodec copy ./output.mp4
 
 echo '-> clean up'
-rm -rf "$tmp_dir"
+rm -rf "${tmp_dir}"
 
 echo '-> done'
