@@ -61,7 +61,7 @@ done
 
 # Convert ts to .mp4
 echo -e "${GREEN}-> convert ts to mp4 (x264)${NO_COLOR}"
-ffmpeg -hide_banner -loglevel error -i "${input_file}" -c:v libx264 "${dest_path}"
+ffmpeg -hide_banner -loglevel quiet -i "${input_file}" -c:v libx264 "${dest_path}"
 
 echo '-> clean up'
 rm -rf "${tmp_dir}"
