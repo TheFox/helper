@@ -3,13 +3,13 @@
 ### ts_files_to_mp4.sh - Convert .ts files to one .mp4 file using ffmpeg.
 ###
 ### Usage:
-###   ts_files_to_mp4.sh <format> <seq_start> <seq_end> <output_path>
+###   ts_files_to_mp4.sh <format> <seq_start> <seq_end> <output_file>
 ###
 ### Options:
 ###   <format>            File format: media_%d.ts
 ###   <seq_start>         Sequence Begin
 ###   <seq_end>           Sequence End
-###   <output_path>       Output Path: media.mp4
+###   <output_file>       Output File: media.mp4
 ###   -h                  Show this message.
 
 NO_COLOR='\033[0m'
@@ -33,13 +33,16 @@ fi
 file_format="$1"
 seq_start="$2"
 seq_end="$3"
-dest_path="$4"
+output_file="$4"
+
+echo "-> work dir: '${PWD}'"
 
 tmp_dir=$(mktemp -d -t 'ts_to_mp4')
 echo "-> tmp dir: '${tmp_dir}'"
 
 input_file="${tmp_dir}/input.ts"
-echo -e "-> input file: '${input_file}'"
+echo "->  input file: '${input_file}'"
+echo "-> output file: '${output_file}'"
 
 # Reset input file.
 if [[ -f "${input_file}" ]] ; then
@@ -61,7 +64,7 @@ done
 
 # Convert ts to .mp4
 echo -e "${GREEN}-> convert ts to mp4 (x264)${NO_COLOR}"
-ffmpeg -hide_banner -loglevel quiet -i "${input_file}" -c:v libx264 "${dest_path}"
+ffmpeg -hide_banner -loglevel quiet -i "${input_file}" -c:v libx264 "${output_file}"
 
 echo '-> clean up'
 rm -rf "${tmp_dir}"
