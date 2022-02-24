@@ -37,7 +37,7 @@ output_file="$4"
 
 echo "-> work dir: '${PWD}'"
 
-tmp_dir=$(mktemp -d -t 'ts_to_mp4')
+tmp_dir=$(mktemp -d -t ts_to_mp4.XXXXXXXXXXXXXXXXXX)
 echo "-> tmp dir: '${tmp_dir}'"
 
 input_file="${tmp_dir}/input.ts"
