@@ -21,7 +21,7 @@ BLUE='\033[0;34m'
 which ffmpeg &> /dev/null || { echo 'ERROR: ffmpeg not found in PATH'; exit 1; }
 which mktemp &> /dev/null || { echo 'ERROR: mktemp not found in PATH'; exit 1; }
 
-ffmpeg --help 2> /dev/null || { echo 'ERROR: ffmpeg does not work'; exit 1; }
+ffmpeg --help &> /dev/null || { echo 'ERROR: ffmpeg does not work'; exit 1; }
 
 help() {
     head -50 "$0" | grep '^###' | sed 's/^###//; s/^ //'
