@@ -56,7 +56,7 @@ echo -e "${GREEN}-> concat files: ${seq_start} to ${seq_end}${NO_COLOR}"
 for n in $(seq ${seq_start} ${seq_end}) ; do
 	file=$(printf "$file_format" $n)
 	if [[ -f "${file}" ]] ; then
-		#echo "input file: ${file}"
+		echo "-> input file: ${file} (${n}/${seq_end})"
 		cat "${file}" >> "${input_file}"
 	else
 		echo -e "${RED}ERROR: file missing: '${file}'${NO_COLOR}"
