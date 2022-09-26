@@ -56,7 +56,8 @@ echo -e "${GREEN}-> concat files: ${seq_start} to ${seq_end}${NO_COLOR}"
 for n in $(seq ${seq_start} ${seq_end}) ; do
 	file=$(printf "$file_format" $n)
 	if [[ -f "${file}" ]] ; then
-		echo "-> input file: ${file} (${n}/${seq_end})"
+		percent=$(printf %.0f\\n "$(( 100* n/seq_end ))")
+		echo "-> input file: ${file}   ${n}/${seq_end}   ${percent} %"
 		cat "${file}" >> "${input_file}"
 	else
 		echo -e "${RED}ERROR: file missing: '${file}'${NO_COLOR}"
@@ -66,7 +67,9 @@ done
 
 # Convert ts to .mp4
 echo -e "${GREEN}-> convert ts to mp4 (x264)${NO_COLOR}"
-ffmpeg -hide_banner -loglevel quiet -i "${input_file}" -c:v libx264 "${output_file}"
+set -x
+ffmpeg -hide_banner -y -i "${input_file}" -c:v libx264 "${output_file}"
+set +x
 
 echo '-> clean up'
 rm -rf "${tmp_dir}"
